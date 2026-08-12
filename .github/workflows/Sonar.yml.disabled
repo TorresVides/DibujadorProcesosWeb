@@ -1,0 +1,90 @@
+# ===========================================================================
+# WORKFLOW DESACTIVADO - NO EJECUTAR
+# ===========================================================================
+#
+# Origen : plantilla academica (fis_boilerplate). NO pertenece a
+#          DibujadorProcesosWeb.
+#
+# Motivo de la desactivacion:
+#   El analisis se ejecutaba con la configuracion de sonar-project.properties,
+#   cuyo `sonar.projectKey` y `sonar.organization` siguen siendo los del
+#   proyecto PLANTILLA. Un push a `main` (o cualquier pull request) intentaria
+#   analizar este repositorio CONTRA UN PROYECTO AJENO: fallaria por permisos
+#   o, peor, reportaria metricas de DibujadorProcesosWeb en el proyecto de la
+#   plantilla.
+#
+#   Ademas, tal como estaba no serviria para este proyecto aunque las claves
+#   fueran correctas: usa el escaner generico, que no analiza codigo Java sin
+#   clases compiladas. Para un proyecto Maven el analisis debe ejecutarse
+#   despues de compilar (`./mvnw verify` y luego el goal `sonar:sonar`).
+#
+# Mecanismo de desactivacion (triple barrera):
+#   1. La extension del archivo es `.yml.disabled`. GitHub Actions solo
+#      interpreta archivos `.yml` / `.yaml` dentro de .github/workflows/,
+#      por lo que este archivo ni siquiera se parsea.
+#   2. El disparador `on:` fue reducido a `workflow_dispatch` (ejecucion
+#      manual): se eliminaron los triggers de `push` y `pull_request`.
+#   3. El job lleva `if: false`, de modo que tampoco correria si se lanzara
+#      manualmente.
+#
+# QUE HACE FALTA ANTES DE REACTIVARLO (bloque de calidad, pendiente):
+#   - Crear el proyecto propio en SonarQube/SonarCloud y obtener su
+#     `projectKey` y `organization` REALES.
+#   - Generar el secret SONAR_TOKEN del proyecto nuevo.
+#   - Configurar JaCoCo en el pom.xml para que exista cobertura.
+#   - Reescribir los pasos para compilar con Maven antes de analizar.
+#
+#   Ninguna de esas cuatro cosas se hace en este bloque, y no se han inventado
+#   valores de reemplazo a proposito: cualquier valor ficticio podria pasar
+#   por configuracion real y acabar commiteado.
+#
+# La ESTRUCTURA de este workflow si es aprovechable y por eso se conserva:
+# usa acciones fijadas por SHA (buena practica) y `fetch-depth: 0`, necesario
+# para que Sonar tenga historial suficiente.
+# ===========================================================================
+
+name: SonarQube (DESACTIVADO - plantilla)
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  sonarqube:
+
+    if: false  # Barrera adicional: el job nunca se ejecuta.
+
+    name: SonarQube (desactivado)
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Workflow desactivado
+        run: |
+          echo "Este workflow pertenece a la plantilla academica y esta desactivado."
+          echo "Apuntaba al projectKey del proyecto plantilla, no al de DibujadorProcesosWeb."
+          exit 1
+
+# ---------------------------------------------------------------------------
+# CONTENIDO ORIGINAL DE LA PLANTILLA (conservado solo como referencia):
+#
+# name: SonarQube
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+# jobs:
+#   sonarqube:
+#     name: SonarQube
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+#         with:
+#           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+#       - name: SonarQube Scan
+#         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
+#         env:
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+# ---------------------------------------------------------------------------

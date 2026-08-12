@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+	  DibujadorProcesosWeb
+	  Visor y editor web de procesos empresariales multiempresa.
+
+	  Proyecto Maven de un solo modulo. El Maven Wrapper (mvnw / mvnw.cmd)
+	  fija la version de Maven para todo el equipo y para CI, pero el
+	  proyecto sigue siendo un proyecto Maven estandar.
+	-->
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<groupId>co.edu.javeriana</groupId>
+	<artifactId>dibujador-procesos-web</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>DibujadorProcesosWeb</name>
+	<description>Visor y editor web de procesos empresariales multiempresa</description>
+
+	<properties>
+		<java.version>21</java.version>
+	</properties>
+
+	<dependencies>
+
+		<!--
+		  Capa web: Spring MVC + servidor embebido.
+		  NOTA: en Spring Boot 4.x este starter se llama
+		  `spring-boot-starter-webmvc`. En Spring Boot 3.x se llamaba
+		  `spring-boot-starter-web`.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+
+		<!-- Motor de plantillas del lado servidor -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- Persistencia: Spring Data JPA + Hibernate -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- Bean Validation (Jakarta Validation + Hibernate Validator) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!--
+		  Actuator: se usa exclusivamente para el endpoint /actuator/health,
+		  que alimenta el healthcheck del contenedor `app` en Docker Compose.
+		  La exposicion queda restringida en application.properties: solo
+		  `health`, sin detalles y sin endpoints administrativos.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<!-- Driver JDBC de PostgreSQL: solo se necesita en ejecucion -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--
+		  Testing.
+		  Spring Boot 4.x sustituye el antiguo `spring-boot-starter-test`
+		  unico por starters de test modulares, uno por cada modulo
+		  funcional. Todos ellos arrastran transitivamente
+		  `spring-boot-starter-test` (JUnit 5, Mockito, AssertJ,
+		  spring-test), por lo que Spring Boot Test queda disponible.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

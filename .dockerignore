@@ -1,0 +1,52 @@
+# ---------------------------------------------------------------------------
+# DibujadorProcesosWeb - .dockerignore
+# Reduce el contexto de build y evita filtrar secretos dentro de la imagen.
+# ---------------------------------------------------------------------------
+
+# --- Artefactos de compilacion (se compila DENTRO de la imagen) ----------
+target/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# --- Control de versiones y CI -------------------------------------------
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# --- Secretos y configuracion local --------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- Logs ----------------------------------------------------------------
+*.log
+logs/
+
+# --- IDEs ----------------------------------------------------------------
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# --- Docker (evita recursion del propio contexto) ------------------------
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# --- Documentacion (no necesaria en la imagen) ---------------------------
+README.md
+BOILERPLATE_template.md
+LICENSE
+docs/
+HELP.md
+
+# --- Sistema operativo ---------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini

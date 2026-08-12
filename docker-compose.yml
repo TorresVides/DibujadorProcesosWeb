@@ -1,8 +1,131 @@
-version: "3.8"
+# ===========================================================================
+# DibujadorProcesosWeb - orquestacion de desarrollo
+#
+# Sin la clave `version:`, obsoleta desde Docker Compose v2.
+#
+# Uso:
+#   cp .env.example .env      (una sola vez; ajusta POSTGRES_PASSWORD)
+#   docker compose up -d      levanta base de datos + aplicacion
+#   docker compose ps         estado y salud de los servicios
+#   docker compose down       detiene (los datos sobreviven en el volumen)
+#   docker compose down -v    detiene Y BORRA los datos
+# ===========================================================================
+
+# Nombre explicito del proyecto: evita que Compose lo deduzca del nombre de
+# la carpeta y que colisione con otros proyectos en la misma maquina.
+name: dibujadorprocesos
 
 services:
-  app:
-    build: .
-    container_name: node_app
+
+  # -------------------------------------------------------------------------
+  # db - PostgreSQL
+  #
+  # Version fijada (16-alpine), nunca `latest`, para que todos los
+  # integrantes y CI usen el mismo motor.
+  # -------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: dibujadorprocesos-db
+
+    # Sobrevive a reinicios de Docker Desktop o del equipo, pero NO se
+    # relevanta si se detiene a proposito con `docker compose stop`.
+    restart: unless-stopped
+
+    # Credenciales tomadas de `.env` (ignorado por Git). Este archivo no
+    # contiene ningun valor literal.
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    # 5433 en el host para no chocar con un PostgreSQL local en el 5432.
+    # Dentro de la red de Compose se sigue usando el 5432.
     ports:
-      - "3000:3000"
+      - "5433:5432"
+
+    # Volumen nombrado: los datos persisten aunque se recree el contenedor.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    # `pg_isready` verifica que PostgreSQL acepta conexiones, no solo que el
+    # proceso exista. El servicio `app` espera a que esto pase a healthy.
+    # El doble simbolo `$$` impide que Compose expanda la variable y deja que
+    # la resuelva el shell DENTRO del contenedor.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - dibujador-net
+
+  # -------------------------------------------------------------------------
+  # app - Aplicacion Spring Boot
+  # -------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dibujadorprocesos-app:local
+    container_name: dibujadorprocesos-app
+
+    restart: unless-stopped
+
+    # No arranca hasta que el healthcheck de `db` reporte healthy. Sin esto,
+    # la aplicacion intentaria conectarse antes de que PostgreSQL termine su
+    # inicializacion y fallaria en el primer arranque.
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # El host es `db` (nombre del servicio, resuelto por el DNS interno de
+    # Compose), NUNCA localhost: dentro del contenedor localhost es el propio
+    # contenedor de la aplicacion. Tambien se usa el puerto interno 5432, no
+    # el 5433 publicado en el host.
+    #
+    # Estas variables SPRING_DATASOURCE_* tienen prioridad sobre los valores
+    # de application.properties gracias al relaxed binding de Spring Boot.
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SERVER_PORT: 8080
+
+    ports:
+      - "8080:8080"
+
+    # Salud real de la aplicacion contra Actuator. `wget` viene incluido en
+    # la imagen Alpine (busybox). Si /actuator/health respondiera 503 (por
+    # ejemplo si PostgreSQL cae), wget devuelve codigo distinto de cero y el
+    # contenedor se marca unhealthy.
+    # start_period da margen al arranque de la JVM sin contar fallos.
+    # El timeout debe ser mayor que el `connection-timeout` de Hikari (5 s)
+    # configurado en application.properties; de lo contrario, con la base de
+    # datos caida el healthcheck abortaria por timeout en vez de recibir el
+    # 503 que Actuator devuelve. Con 10 s obtiene siempre una respuesta real.
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+    networks:
+      - dibujador-net
+
+# ---------------------------------------------------------------------------
+# Volumen persistente de PostgreSQL. Con nombre explicito para distinguirlo
+# de los volumenes de otros proyectos en la misma maquina.
+# ---------------------------------------------------------------------------
+volumes:
+  pgdata:
+    name: dibujadorprocesos_pgdata
+
+# ---------------------------------------------------------------------------
+# Red propia del proyecto: aisla estos contenedores de otros proyectos.
+# ---------------------------------------------------------------------------
+networks:
+  dibujador-net:
+    driver: bridge

@@ -1,0 +1,104 @@
+# ===========================================================================
+# WORKFLOW DESACTIVADO - NO EJECUTAR
+# ===========================================================================
+#
+# Origen : plantilla academica (fis_boilerplate). NO pertenece a
+#          DibujadorProcesosWeb.
+#
+# Motivo de la desactivacion:
+#   El workflow original construia y validaba la demo Node/Express heredada
+#   de la plantilla:
+#
+#       docker build -t simple-node-app .
+#       docker run -d -p 3000:3000 --name test_container simple-node-app
+#       curl http://localhost:3000
+#
+#   Nada de eso corresponde al proyecto real, que es una aplicacion Java 21 +
+#   Spring Boot que expone el puerto 8080. La demo Node (app/index.js,
+#   app/package.json) fue eliminada, y el Dockerfile actual construye la
+#   imagen de Spring Boot, por lo que este pipeline fallaria en cada push a
+#   `main` o `develop`.
+#
+# Mecanismo de desactivacion (triple barrera):
+#   1. La extension del archivo es `.yml.disabled`. GitHub Actions solo
+#      interpreta archivos `.yml` / `.yaml` dentro de .github/workflows/,
+#      por lo que este archivo ni siquiera se parsea.
+#   2. El disparador `on:` fue reducido a `workflow_dispatch` (ejecucion
+#      manual). Si alguien renombrara el archivo a `.yml`, NO se ejecutaria
+#      automaticamente en ningun push.
+#   3. El job lleva `if: false`, de modo que tampoco correria si se lanzara
+#      manualmente.
+#
+# Se conserva como referencia historica. Sera REEMPLAZADO por el CI real del
+# proyecto (compilacion con `./mvnw verify` y build de la imagen Spring Boot)
+# en el bloque de CI. No reactivar tal cual: su contenido es incompatible con
+# la arquitectura actual.
+# ===========================================================================
+
+name: Docker CI Pipeline (DESACTIVADO - plantilla)
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  docker-build:
+
+    if: false  # Barrera adicional: el job nunca se ejecuta.
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Workflow desactivado
+        run: |
+          echo "Este workflow pertenece a la plantilla academica y esta desactivado."
+          echo "El CI real del proyecto se definira en un bloque posterior."
+          exit 1
+
+# ---------------------------------------------------------------------------
+# CONTENIDO ORIGINAL DE LA PLANTILLA (conservado solo como referencia):
+#
+# name: Docker CI Pipeline
+#
+# on:
+#   push:
+#     branches:
+#       - develop
+#       - main
+#
+# jobs:
+#
+#   docker-build:
+#
+#     runs-on: ubuntu-latest
+#
+#     steps:
+#
+#       # Descargar repositorio
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+#
+#       # Construir imagen Docker
+#       - name: Build Docker image
+#         run: |
+#           docker build -t simple-node-app .
+#
+#       # Ejecutar contenedor
+#       - name: Run Docker container
+#         run: |
+#           docker run -d -p 3000:3000 --name test_container simple-node-app
+#
+#       # Esperar inicio
+#       - name: Wait for container startup
+#         run: sleep 10
+#
+#       # Validar aplicacion
+#       - name: Validate application
+#         run: |
+#           curl http://localhost:3000
+#
+#       # Mostrar contenedores
+#       - name: Show running containers
+#         run: docker ps
+# ---------------------------------------------------------------------------
