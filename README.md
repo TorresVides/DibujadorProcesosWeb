@@ -1,8 +1,8 @@
-# DibujadorProcesosWeb
+# Editor y Visor de Procesos Empresariales
 
 ## Descripción
 
-DibujadorProcesosWeb es una aplicación web para la visualización y edición de procesos empresariales en un entorno multiempresa. Cada organización administra sus propios usuarios y sus propios procesos, de modo que la información de una empresa permanece aislada de la del resto.
+Este proyecto consiste en una aplicación web para la visualización y edición de procesos empresariales en un entorno multiempresa. Cada organización administra sus propios usuarios y sus propios procesos, de modo que la información de una empresa permanece aislada de la del resto.
 
 El sistema permite consultar, crear, modificar y organizar procesos. Está orientado a representarlos y editarlos, no a ejecutarlos: no actúa como motor BPM ni gestiona instancias de proceso en ejecución.
 
