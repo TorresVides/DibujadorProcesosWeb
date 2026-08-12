@@ -75,7 +75,7 @@ Esta es la arquitectura prevista para el código. El repositorio contiene por ah
 ## Estructura del Proyecto
 
 ```text
-DibujadorProcesosWeb/
+Enterprise/
 ├── .github/
 │   └── workflows/                  # marcadores de workflows futuros, aún inactivos
 │       ├── Sonar.yml.disabled
