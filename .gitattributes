@@ -1,2 +1,3 @@
+# mvnw debe conservar LF para funcionar en Docker y CI Linux.
 /mvnw text eol=lf
 *.cmd text eol=crlf
