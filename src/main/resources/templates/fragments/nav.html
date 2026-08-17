@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/*
+  Menú lateral. Recorre el atributo global `secciones` y resalta la sección en curso
+  comparando su clave con `paginaActiva`, que fija cada método del controlador.
+*/-->
+<aside class="lateral" th:fragment="menu">
+
+	<nav class="menu" aria-label="Secciones de la Wiki">
+		<p class="menu__titulo">Documentación</p>
+		<ul class="menu__lista">
+			<li th:each="seccion : ${secciones}">
+				<a class="menu__enlace"
+				   th:href="@{${seccion.ruta}}"
+				   th:classappend="${seccion.clave == paginaActiva} ? 'menu__enlace--activo'"
+				   th:aria-current="${seccion.clave == paginaActiva} ? 'page' : null"
+				   th:text="${seccion.titulo}">Sección</a>
+			</li>
+		</ul>
+	</nav>
+
+	<p class="lateral__nota">
+		Documentación del proyecto de la asignatura
+		<span th:text="${proyecto.asignatura}">Asignatura</span>.
+	</p>
+
+</aside>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* Pie de página. Reutiliza `secciones` para construir el mapa del sitio. */-->
+<footer class="pie" th:fragment="pie">
+
+	<nav class="pie__mapa" aria-label="Mapa del sitio">
+		<p class="pie__titulo">Secciones</p>
+		<ul>
+			<li th:each="seccion : ${secciones}">
+				<a th:href="@{${seccion.ruta}}" th:text="${seccion.titulo}">Sección</a>
+			</li>
+		</ul>
+	</nav>
+
+	<div class="pie__creditos">
+		<p th:text="${proyecto.nombre}">Nombre del proyecto</p>
+		<p>
+			<span th:text="${proyecto.asignatura}">Asignatura</span> ·
+			<span th:text="${proyecto.institucion}">Institución</span> ·
+			<span th:text="${proyecto.anio}">Año</span>
+		</p>
+		<p>
+			<a class="pie__repositorio" th:href="${proyecto.repositorio}">Repositorio en GitHub</a>
+		</p>
+	</div>
+
+</footer>
+
+</body>
+</html>

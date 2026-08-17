@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: pagina(~{::main}, ~{})}">
+<head>
+	<title>Arquitectura y tecnologías</title>
+</head>
+<body>
+
+<main class="pagina" id="contenido" tabindex="-1">
+
+	<p class="pagina__contexto">Wiki del proyecto</p>
+	<h1 class="pagina__titulo">Arquitectura y tecnologías</h1>
+	<p class="pagina__entradilla">
+		Organización interna de la aplicación y stack técnico verificado del repositorio.
+	</p>
+
+	<section class="bloque">
+		<h2>Organización por capas</h2>
+		<p>
+			La aplicación sigue el patrón MVC con separación por capas. Una petición HTTP las
+			recorre en este orden:
+		</p>
+		<ol class="capas">
+			<li class="capa" th:each="capa, estado : ${capas}">
+				<span class="capa__orden" th:text="${estado.count}" aria-hidden="true">1</span>
+				<div>
+					<h3 class="capa__nombre" th:text="${capa.nombre}">Capa</h3>
+					<p class="capa__texto" th:text="${capa.responsabilidad}">Responsabilidad.</p>
+				</div>
+			</li>
+		</ol>
+		<p class="nota">
+			Las capas Repository y Persistencia están previstas por la arquitectura, pero todavía no
+			implementadas: el modelo de dominio se define en una entrega posterior. Los datos de esta
+			Wiki no pasan por ellas, viven en memoria.
+		</p>
+	</section>
+
+	<section class="bloque">
+		<h2>Stack técnico</h2>
+		<div th:each="grupo : ${tecnologiasPorCategoria}">
+			<h3 class="subtitulo" th:text="${grupo.key}">Categoría</h3>
+			<!--/* La tabla se desplaza dentro de su propio contenedor: en móvil no debe
+			       provocar scroll horizontal en toda la página. */-->
+			<div class="tabla-envoltorio" tabindex="0" role="group"
+			     th:aria-label="|Tecnologías de ${grupo.key}|">
+				<table class="tabla">
+					<thead>
+						<tr>
+							<th scope="col">Tecnología</th>
+							<th scope="col">Versión</th>
+							<th scope="col">Propósito</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="tecnologia : ${grupo.value}">
+							<th scope="row" th:text="${tecnologia.nombre}">Tecnología</th>
+							<td>
+								<span class="tabla__vacio" th:if="${#strings.isEmpty(tecnologia.version)}">—</span>
+								<span class="version" th:unless="${#strings.isEmpty(tecnologia.version)}"
+								      th:text="${tecnologia.version}">0.0.0</span>
+							</td>
+							<td th:text="${tecnologia.proposito}">Propósito.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</section>
+
+</main>
+
+</body>
+</html>

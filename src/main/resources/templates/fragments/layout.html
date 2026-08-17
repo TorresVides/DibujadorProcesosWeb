@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--/*
+  Esqueleto común de todas las páginas de la Wiki.
+
+  Cada página invoca este fragment pasándole su propio <main> como parámetro:
+
+      <html th:replace="~{fragments/layout :: pagina(~{::main}, ~{})}">
+
+  De este modo la página solo escribe su contenido; la cabecera, la navegación,
+  el pie y el <head> se definen una única vez en este archivo.
+
+  El segundo parámetro son los scripts propios de la página. Las páginas que no
+  necesitan JavaScript pasan el fragment vacío `~{}`, que no renderiza nada.
+*/-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="pagina(contenido, scripts)">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="|${tituloPagina} · ${proyecto.nombre}|">Wiki del proyecto</title>
+	<link rel="stylesheet" th:href="@{/css/wiki.css}">
+</head>
+<body>
+
+	<a class="salto-contenido" href="#contenido">Ir al contenido</a>
+
+	<header th:replace="~{fragments/header :: cabecera}"></header>
+
+	<div class="shell">
+		<aside th:replace="~{fragments/nav :: menu}"></aside>
+
+		<div class="shell__principal">
+			<th:block th:replace="${contenido}">
+				<main>Contenido de la página.</main>
+			</th:block>
+
+			<footer th:replace="~{fragments/footer :: pie}"></footer>
+		</div>
+	</div>
+
+	<th:block th:replace="${scripts}"></th:block>
+
+</body>
+</html>
