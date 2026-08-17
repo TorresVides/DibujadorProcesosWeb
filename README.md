@@ -10,6 +10,23 @@ El sistema permite consultar, crear, modificar y organizar procesos. Está orien
 
 Ofrecer una herramienta web que permita a varias empresas documentar y mantener sus procesos de forma centralizada, con una interfaz común para consultarlos y editarlos, y con separación estricta de la información entre organizaciones.
 
+## Estado Actual
+
+Lo implementado hasta ahora es la Wiki del proyecto: una aplicación web renderizada en el servidor con Spring MVC y Thymeleaf, que documenta el sistema y sirve de base técnica para las siguientes entregas.
+
+Incluye:
+
+- seis secciones de contenido con navegación entre ellas: Inicio, Alcance y requisitos, Arquitectura y tecnologías, Historias de Usuario, Entregas del proyecto y Contáctenos;
+- plantillas Thymeleaf con layout y fragments reutilizables para cabecera, navegación y pie;
+- contenido generado desde el servidor, no páginas estáticas;
+- hoja de estilos propia y responsive, sin frameworks de CSS ni recursos externos;
+- formulario Contáctenos con validación en el navegador mediante JavaScript propio y validación en el servidor con Jakarta Validation;
+- persistencia del mensaje de contacto con Spring Data JPA sobre PostgreSQL.
+
+La sección de Historias de Usuario está pendiente: se completará con las historias tal como estén redactadas en la documentación oficial del proyecto.
+
+El modelo de dominio principal —empresas, usuarios y procesos— todavía no está implementado.
+
 ## Equipo del Proyecto
 
 | Nombre        | Rol           | GitHub                                       |
@@ -70,34 +87,48 @@ Controller → Service → Repository → Persistencia
 - **Repository:** acceso a datos mediante Spring Data JPA.
 - **Persistencia:** base de datos PostgreSQL.
 
-Esta es la arquitectura prevista para el código. El repositorio contiene por ahora la clase de arranque, la configuración de la aplicación y la infraestructura de ejecución; las capas anteriores se implementarán junto con el modelo de dominio.
+Las capas Controller y Service están implementadas para la Wiki del proyecto. El acceso a datos se limita por ahora a los mensajes del formulario Contáctenos: el resto del contenido de la Wiki se sirve desde memoria, sin pasar por la base de datos. Las capas Repository y Persistencia se completarán junto con el modelo de dominio.
 
 ## Estructura del Proyecto
 
 ```text
-Enterprise/
+DibujadorProcesosWeb/
 ├── .github/
-│   └── workflows/                  # marcadores de workflows futuros, aún inactivos
+│   └── workflows/                      # marcadores de workflows futuros, aún inactivos
 │       ├── Sonar.yml.disabled
 │       ├── docker-ci.yml.disabled
 │       └── docker-publish.yml.disabled
 ├── .mvn/
 │   └── wrapper/
 │       └── maven-wrapper.properties
-├── conf/                           # configuración adicional, aún sin contenido
+├── conf/                               # configuración adicional, aún sin contenido
 ├── src/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── co/edu/javeriana/dibujadorprocesos/
-│   │   │       └── DibujadorProcesosApplication.java
+│   │   │       ├── DibujadorProcesosApplication.java
+│   │   │       └── wiki/
+│   │   │           ├── contacto/       # entidad y repositorio del mensaje de contacto
+│   │   │           ├── controller/     # controladores y datos comunes a las vistas
+│   │   │           ├── form/           # DTO del formulario, con Jakarta Validation
+│   │   │           ├── model/          # tipos de presentación, sin JPA
+│   │   │           └── service/        # contenido de la Wiki y registro de mensajes
 │   │   └── resources/
 │   │       ├── static/
+│   │       │   ├── css/                # hoja de estilos propia
+│   │       │   └── js/                 # validación del formulario
 │   │       ├── templates/
-│   │       └── application.properties
+│   │       │   ├── fragments/          # layout, cabecera, navegación y pie
+│   │       │   └── wiki/               # una plantilla por sección
+│   │       ├── application.properties
+│   │       └── schema.sql              # esquema de la base de datos
 │   └── test/
 │       └── java/
 │           └── co/edu/javeriana/dibujadorprocesos/
-│               └── DibujadorProcesosApplicationTests.java
+│               ├── DibujadorProcesosApplicationTests.java
+│               └── wiki/
+│                   ├── controller/
+│                   └── service/
 ├── .dockerignore
 ├── .env.example
 ├── .gitattributes
@@ -193,6 +224,18 @@ En Windows:
 mvnw.cmd spring-boot:run
 ```
 
+## Pruebas
+
+Ejecutar la suite con el Maven Wrapper:
+
+```bash
+./mvnw test
+```
+
+En Windows, `mvnw.cmd test`.
+
+Las pruebas cubren las rutas de la Wiki, el renderizado de datos provenientes del servicio y el formulario de contacto. No requieren PostgreSQL en ejecución. No hay reporte de cobertura configurado.
+
 ## Base de Datos
 
 - Motor: PostgreSQL 16 (imagen `postgres:16-alpine`).
@@ -200,13 +243,21 @@ mvnw.cmd spring-boot:run
 - Los datos persisten en un volumen de Docker, por lo que sobreviven al reinicio de los contenedores.
 - Puerto en el host: `5433`. Puerto interno de PostgreSQL: `5432`.
 
-Todavía no se ha implementado el modelo de dominio, por lo que no se han definido tablas propias del dominio de la aplicación.
+### Esquema
+
+El esquema se controla de forma explícita. Hibernate se mantiene en `spring.jpa.hibernate.ddl-auto=none`, de modo que no crea ni altera tablas: la única fuente del esquema es `src/main/resources/schema.sql`, que se ejecuta en cada arranque y es idempotente (`CREATE TABLE IF NOT EXISTS`).
+
+Actualmente existe una sola tabla, `contacto_mensaje`, que almacena los mensajes enviados desde el formulario Contáctenos de la Wiki. No forma parte del modelo de dominio del sistema.
+
+Las tablas de empresas, usuarios y procesos se definirán junto con el modelo de dominio, en una entrega posterior.
 
 ## Documentación
 
-La documentación ampliada del proyecto se publica en la Wiki del repositorio:
+La documentación del proyecto se publica como parte de la propia aplicación. Con los servicios en ejecución, está disponible en `http://localhost:8080`.
 
-[Wiki del proyecto](https://github.com/TorresVides/DibujadorProcesosWeb/wiki)
+También existe la Wiki del repositorio en GitHub:
+
+[Wiki del repositorio](https://github.com/TorresVides/DibujadorProcesosWeb/wiki)
 
 ## Contexto Académico
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: pagina(~{::main}, ~{})}">
+<head>
+	<title>Inicio</title>
+</head>
+<body>
+
+<main class="pagina" id="contenido" tabindex="-1">
+
+	<p class="pagina__contexto">Wiki del proyecto</p>
+	<h1 class="pagina__titulo" th:text="${proyecto.nombre}">Nombre del proyecto</h1>
+	<p class="pagina__entradilla" th:text="${proyecto.resumen}">Resumen del proyecto</p>
+
+	<section class="bloque">
+		<h2>Qué es</h2>
+		<p>
+			Cada organización administra sus propios usuarios y sus propios procesos, de modo que
+			la información de una empresa permanece aislada de la del resto. Sobre esa base, el
+			sistema ofrece una interfaz común para consultar, crear, modificar y organizar la
+			documentación de procesos de cada empresa.
+		</p>
+		<p>
+			El objetivo es que varias empresas puedan documentar y mantener sus procesos de forma
+			centralizada, con separación estricta de la información entre organizaciones.
+		</p>
+	</section>
+
+	<section class="bloque">
+		<h2>Qué no es</h2>
+		<p>
+			El sistema está orientado a representar y editar procesos, no a ejecutarlos. No actúa
+			como motor BPM, no gestiona instancias de proceso en ejecución y no dispara tareas ni
+			flujos de trabajo de forma automática.
+		</p>
+		<p>
+			Esta distinción condiciona todo el diseño y se detalla en
+			<a th:href="@{/alcance}">Alcance y requisitos</a>.
+		</p>
+	</section>
+
+	<section class="bloque">
+		<h2>Recorrido por la documentación</h2>
+		<div class="tarjetas">
+			<article class="tarjeta" th:each="seccion : ${secciones}" th:if="${seccion.clave != 'inicio'}">
+				<h3 class="tarjeta__titulo">
+					<a th:href="@{${seccion.ruta}}" th:text="${seccion.titulo}">Sección</a>
+				</h3>
+				<p class="tarjeta__texto" th:text="${seccion.descripcion}">Descripción de la sección.</p>
+			</article>
+		</div>
+	</section>
+
+</main>
+
+</body>
+</html>

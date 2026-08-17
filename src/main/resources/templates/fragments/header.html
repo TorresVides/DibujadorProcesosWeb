@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* Barra superior. Los datos salen del atributo global `proyecto`. */-->
+<header class="cabecera" th:fragment="cabecera">
+
+	<a class="cabecera__marca" th:href="@{/}">
+		<span class="cabecera__sigla" aria-hidden="true">EVP</span>
+		<span class="cabecera__identidad">
+			<span class="cabecera__nombre" th:text="${proyecto.nombre}">Nombre del proyecto</span>
+			<span class="cabecera__resumen" th:text="${proyecto.resumen}">Resumen del proyecto</span>
+		</span>
+	</a>
+
+	<dl class="cabecera__ficha">
+		<div>
+			<dt>Asignatura</dt>
+			<dd th:text="${proyecto.asignatura}">Asignatura</dd>
+		</div>
+		<div>
+			<dt>Institución</dt>
+			<dd th:text="${proyecto.institucion}">Institución</dd>
+		</div>
+		<div>
+			<dt>Año</dt>
+			<dd th:text="${proyecto.anio}">Año</dd>
+		</div>
+	</dl>
+
+</header>
+
+</body>
+</html>

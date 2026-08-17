@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: pagina(~{::main}, ~{})}">
+<head>
+	<title>Historias de Usuario</title>
+</head>
+<body>
+
+<main class="pagina" id="contenido" tabindex="-1">
+
+	<p class="pagina__contexto">Wiki del proyecto</p>
+	<h1 class="pagina__titulo">Historias de Usuario</h1>
+	<p class="pagina__entradilla">
+		Historias de Usuario oficiales pendientes de incorporación a esta Wiki.
+	</p>
+
+	<p class="aviso">
+		<strong>Sección en construcción.</strong>
+		Esta sección se completará con las Historias de Usuario tal como estén redactadas en
+		la documentación oficial del proyecto. Se publicarán con su redacción original, sin
+		reformularlas, para que la Wiki y la documentación del proyecto no se contradigan.
+	</p>
+
+	<section class="bloque">
+		<h2>Qué recogerá esta sección</h2>
+		<p>
+			Cada historia se publicará con su identificador, el rol que la solicita, la necesidad,
+			el beneficio esperado y sus criterios de aceptación, tal como aparezcan en la
+			documentación oficial.
+		</p>
+	</section>
+
+	<section class="bloque">
+		<h2>Áreas funcionales que deberá cubrir</h2>
+		<p>
+			Mientras tanto, esto es lo que el backlog tendrá que cubrir: el alcance confirmado del
+			sistema. Lo que sigue son áreas funcionales del proyecto, <strong>no</strong> historias
+			de usuario.
+		</p>
+		<ul class="alcance">
+			<li class="alcance__item alcance__item--incluido" th:each="area : ${areasFuncionales}">
+				<h3 class="alcance__titulo" th:text="${area.titulo}">Área funcional</h3>
+				<p class="alcance__texto" th:text="${area.descripcion}">Descripción.</p>
+			</li>
+		</ul>
+		<p class="nota" th:if="${#lists.isEmpty(areasFuncionales)}">
+			Todavía no hay áreas funcionales confirmadas.
+		</p>
+		<p class="parrafo-tras-lista">
+			El detalle completo, incluido lo que queda fuera del alcance, está en
+			<a th:href="@{/alcance}">Alcance y requisitos</a>.
+		</p>
+	</section>
+
+</main>
+
+</body>
+</html>

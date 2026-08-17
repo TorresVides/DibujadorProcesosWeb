@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: pagina(~{::main}, ~{})}">
+<head>
+	<title>Alcance y requisitos</title>
+</head>
+<body>
+
+<main class="pagina" id="contenido" tabindex="-1">
+
+	<p class="pagina__contexto">Wiki del proyecto</p>
+	<h1 class="pagina__titulo">Alcance y requisitos</h1>
+	<p class="pagina__entradilla">
+		Qué construye el proyecto y, con la misma importancia, qué queda deliberadamente fuera.
+	</p>
+
+	<section class="bloque">
+		<h2>Dentro del alcance</h2>
+		<ul class="alcance">
+			<li class="alcance__item alcance__item--incluido"
+			    th:each="elemento : ${elementosAlcance}" th:if="${elemento.incluido}">
+				<h3 class="alcance__titulo" th:text="${elemento.titulo}">Elemento</h3>
+				<p class="alcance__texto" th:text="${elemento.descripcion}">Descripción.</p>
+			</li>
+		</ul>
+	</section>
+
+	<section class="bloque">
+		<h2>Fuera del alcance</h2>
+		<p>
+			El sistema documenta procesos; no los ejecuta. Lo siguiente queda explícitamente
+			excluido para evitar que se confunda con un motor BPM.
+		</p>
+		<ul class="alcance">
+			<li class="alcance__item alcance__item--excluido"
+			    th:each="elemento : ${elementosAlcance}" th:unless="${elemento.incluido}">
+				<h3 class="alcance__titulo" th:text="${elemento.titulo}">Elemento</h3>
+				<p class="alcance__texto" th:text="${elemento.descripcion}">Descripción.</p>
+			</li>
+		</ul>
+	</section>
+
+	<section class="bloque">
+		<h2>Requisitos técnicos</h2>
+		<p>
+			Condiciones de construcción y ejecución que ya están fijadas en el repositorio.
+		</p>
+		<ul class="lista-marcada">
+			<li th:each="requisito : ${requisitosTecnicos}" th:text="${requisito}">Requisito.</li>
+		</ul>
+	</section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: pagina(~{::main}, ~{})}">
+<head>
+	<title>Entregas del proyecto</title>
+</head>
+<body>
+
+<main class="pagina" id="contenido" tabindex="-1">
+
+	<p class="pagina__contexto">Wiki del proyecto</p>
+	<h1 class="pagina__titulo">Entregas del proyecto</h1>
+	<p class="pagina__entradilla">
+		Calendario oficial de entregas de la asignatura, con su fecha y su peso en la nota.
+	</p>
+
+	<section class="bloque">
+		<ol class="entregas">
+			<li class="entrega" th:each="entrega : ${entregas}">
+
+				<div class="entrega__cabecera">
+					<span class="entrega__codigo" th:text="${entrega.codigo}">Entrega</span>
+					<h2 class="entrega__nombre" th:text="${entrega.nombre}">Nombre de la entrega</h2>
+					<span class="etiqueta etiqueta--peso" th:text="|${entrega.peso}% de la nota|">0%</span>
+				</div>
+
+				<p class="entrega__fecha">
+					<span class="entrega__fecha-etiqueta">Fecha de entrega</span>
+					<time th:datetime="${entrega.fecha}"
+					      th:text="${#temporals.format(entrega.fecha, 'dd/MM/yyyy')}">00/00/0000</time>
+				</p>
+
+				<p class="entrega__texto" th:text="${entrega.descripcion}">Descripción de la entrega.</p>
+
+				<ul class="lista-marcada">
+					<li th:each="item : ${entrega.alcance}" th:text="${item}">Elemento del alcance.</li>
+				</ul>
+
+			</li>
+		</ol>
+	</section>
+
+</main>
+
+</body>
+</html>
