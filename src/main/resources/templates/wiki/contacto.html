@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: pagina(~{::main}, ~{::script})}">
+<head>
+	<title>Contáctenos</title>
+</head>
+<body>
+
+<main class="pagina" id="contenido" tabindex="-1">
+
+	<p class="pagina__contexto">Wiki del proyecto</p>
+	<h1 class="pagina__titulo">Contáctenos</h1>
+	<p class="pagina__entradilla">
+		¿Tienes una duda sobre el proyecto, una sugerencia o encontraste un error? Escríbenos y
+		tu mensaje quedará registrado para su posterior revisión por parte del equipo.
+	</p>
+
+	<!--/* Aviso de éxito. Llega como atributo flash tras el redirect del POST correcto. */-->
+	<div class="exito" role="status" th:if="${mensajeExito}">
+		<p class="exito__titulo">Mensaje enviado</p>
+		<p th:text="${mensajeExito}">Confirmación.</p>
+	</div>
+
+	<!--/* Resumen de errores del servidor: solo aparece si el POST llegó sin pasar por el JS. */-->
+	<div class="alerta" role="alert" th:if="${#fields.hasErrors('contactoForm.*')}">
+		<p class="alerta__titulo">Revisa el formulario</p>
+		<p>Hay campos que no cumplen las condiciones. Los detalles están junto a cada uno.</p>
+	</div>
+
+	<section class="bloque">
+		<h2>Escríbenos</h2>
+
+		<form id="formContacto" class="formulario" method="post"
+		      th:action="@{/contacto}" th:object="${contactoForm}" novalidate>
+
+			<p class="formulario__obligatorios">
+				Todos los campos son obligatorios.
+			</p>
+
+			<fieldset class="formulario__grupo">
+				<legend>Datos de contacto</legend>
+
+				<div class="campo" data-campo="nombreCompleto"
+				     th:classappend="${#fields.hasErrors('nombreCompleto')} ? 'campo--error'">
+					<label for="nombreCompleto">Nombre completo</label>
+					<input type="text" id="nombreCompleto" th:field="*{nombreCompleto}"
+					       data-min="3" maxlength="120" autocomplete="name"
+					       aria-describedby="ayuda-nombreCompleto error-nombreCompleto"
+					       th:aria-invalid="${#fields.hasErrors('nombreCompleto')} ? 'true' : null">
+					<p class="campo__ayuda" id="ayuda-nombreCompleto">Mínimo 3 caracteres.</p>
+					<p class="campo__error" id="error-nombreCompleto" role="alert"
+					   th:errors="*{nombreCompleto}"
+					   th:hidden="${!#fields.hasErrors('nombreCompleto')}" hidden></p>
+				</div>
+
+				<div class="campo" data-campo="correo"
+				     th:classappend="${#fields.hasErrors('correo')} ? 'campo--error'">
+					<label for="correo">Correo electrónico</label>
+					<input type="email" id="correo" th:field="*{correo}"
+					       maxlength="180" autocomplete="email"
+					       aria-describedby="ayuda-correo error-correo"
+					       th:aria-invalid="${#fields.hasErrors('correo')} ? 'true' : null">
+					<p class="campo__ayuda" id="ayuda-correo">Por ejemplo: nombre@dominio.com</p>
+					<p class="campo__error" id="error-correo" role="alert"
+					   th:errors="*{correo}"
+					   th:hidden="${!#fields.hasErrors('correo')}" hidden></p>
+				</div>
+
+				<div class="campo" data-campo="telefono"
+				     th:classappend="${#fields.hasErrors('telefono')} ? 'campo--error'">
+					<label for="telefono">Teléfono</label>
+					<input type="tel" id="telefono" th:field="*{telefono}"
+					       data-min="7" data-max="15" maxlength="15"
+					       inputmode="numeric" autocomplete="tel"
+					       aria-describedby="ayuda-telefono error-telefono"
+					       th:aria-invalid="${#fields.hasErrors('telefono')} ? 'true' : null">
+					<p class="campo__ayuda" id="ayuda-telefono">Solo números, entre 7 y 15 dígitos.</p>
+					<p class="campo__error" id="error-telefono" role="alert"
+					   th:errors="*{telefono}"
+					   th:hidden="${!#fields.hasErrors('telefono')}" hidden></p>
+				</div>
+			</fieldset>
+
+			<fieldset class="formulario__grupo">
+				<legend>Tu consulta</legend>
+
+				<div class="campo" data-campo="asunto"
+				     th:classappend="${#fields.hasErrors('asunto')} ? 'campo--error'">
+					<label for="asunto">Asunto o motivo de contacto</label>
+					<!--/* Las opciones las sirve ContactoService: no se repiten en el JavaScript. */-->
+					<select id="asunto" th:field="*{asunto}"
+					        aria-describedby="ayuda-asunto error-asunto"
+					        th:aria-invalid="${#fields.hasErrors('asunto')} ? 'true' : null">
+						<option value="">Seleccione una opción</option>
+						<option th:each="opcion : ${asuntos}"
+						        th:value="${opcion.valor}"
+						        th:text="${opcion.etiqueta}">Motivo</option>
+					</select>
+					<p class="campo__ayuda" id="ayuda-asunto">Elige el motivo que mejor describa tu consulta.</p>
+					<p class="campo__error" id="error-asunto" role="alert"
+					   th:errors="*{asunto}"
+					   th:hidden="${!#fields.hasErrors('asunto')}" hidden></p>
+				</div>
+
+				<div class="campo" data-campo="mensaje"
+				     th:classappend="${#fields.hasErrors('mensaje')} ? 'campo--error'">
+					<label for="mensaje">Mensaje</label>
+					<textarea id="mensaje" rows="7" th:field="*{mensaje}"
+					          data-min="20" data-max="400" maxlength="400"
+					          aria-describedby="contador-mensaje error-mensaje"
+					          th:aria-invalid="${#fields.hasErrors('mensaje')} ? 'true' : null"></textarea>
+					<p class="campo__contador" id="contador-mensaje" aria-live="polite">
+						Faltan 20 caracteres para el mínimo.
+					</p>
+					<p class="campo__error" id="error-mensaje" role="alert"
+					   th:errors="*{mensaje}"
+					   th:hidden="${!#fields.hasErrors('mensaje')}" hidden></p>
+				</div>
+			</fieldset>
+
+			<div class="formulario__acciones">
+				<button type="submit" class="boton boton--primario">Enviar mensaje</button>
+			</div>
+
+		</form>
+	</section>
+
+	<section class="bloque">
+		<h2>Antes de escribirnos</h2>
+		<div class="tarjetas">
+			<article class="tarjeta">
+				<h3 class="tarjeta__titulo">Consulta la documentación</h3>
+				<p class="tarjeta__texto">
+					El <a th:href="@{/alcance}">alcance</a> y la
+					<a th:href="@{/arquitectura}">arquitectura</a> resuelven la mayoría de las dudas
+					sobre qué hace el sistema y cómo está construido.
+				</p>
+			</article>
+			<article class="tarjeta">
+				<h3 class="tarjeta__titulo">Reporte de errores</h3>
+				<p class="tarjeta__texto">
+					Si encontraste un fallo, cuéntanos qué hiciste y qué esperabas que pasara.
+					Cuanto más concreto, mejor.
+				</p>
+			</article>
+			<article class="tarjeta">
+				<h3 class="tarjeta__titulo">Repositorio</h3>
+				<p class="tarjeta__texto">
+					El código está publicado en
+					<a th:href="${proyecto.repositorio}">GitHub</a>.
+				</p>
+			</article>
+		</div>
+	</section>
+
+</main>
+
+<script th:src="@{/js/contacto.js}" defer></script>
+
+</body>
+</html>
