@@ -29,12 +29,12 @@ El modelo de dominio principal —empresas, usuarios y procesos— todavía no e
 
 ## Equipo del Proyecto
 
-| Nombre        | Rol           | GitHub                                       |
-| ------------- | ------------- | -------------------------------------------- |
-| David Orjuela | Por definir   | [@Kerosene21](https://github.com/Kerosene21) |
-| Por completar | Por completar | Por completar                                |
-| Por completar | Por completar | Por completar                                |
-| Por completar | Por completar | Por completar                                |
+| Nombre            | Rol                     | GitHub                                               |
+| ----------------- | ----------------------- | ---------------------------------------------------- |
+| David Orjuela     | DevOps Engineer         | [@Kerosene21](https://github.com/Kerosene21)         |
+| Cristian Sánchez  | Quality Assurance (QA)  | [@CristianXavier](https://github.com/CristianXavier) |
+| Karol Torres      | Full Stack Developer    | [@TorresVides](https://github.com/TorresVides)       |
+| Daniel Garzón     | Full Stack Developer    | [@Garzondf](https://github.com/Garzondf)             |
 
 ## Tecnologías Utilizadas
 
